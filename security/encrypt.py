@@ -34,8 +34,6 @@ def hash_password (pre_pass):
     return  hash
 
 def verify_password(db_pass, current_pass):
-    print('ENTREEEEEEEEEEE')
-    print("Validacion: ",bcrypt_context.verify(current_pass,db_pass))
     return bcrypt_context.verify(current_pass,db_pass)
 
 

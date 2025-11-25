@@ -34,8 +34,9 @@ def authenticate_user(mail: str, password: str):
         if not user: 
             return False
         print('Still')
-        print(password, user.hashed_password)
+        print('Pass: ', password)
+        print('Saved pass: ', user.hashed_password)
         # Verifies that the password matches the stored hashed password
-        if not verify_password(password, user.hashed_password):
+        if not verify_password(user.hashed_password,password):
             return False
         return user
