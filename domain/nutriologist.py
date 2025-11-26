@@ -54,7 +54,7 @@ def add_food_group(current_food_group:CreateFoodGroupRequest):
         )
         db.add(new_food_group)
         db.commit()
-        print(new_food_group)
+        print("Database food group: ",new_food_group)
         return new_food_group
 
 def get_all_food_groups_associate_food(food_id: int):

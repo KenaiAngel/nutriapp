@@ -69,8 +69,9 @@ class CreateFoodGroupRequest(BaseModel):
 
 # Endpoint que usara el NUTRIOLOGO para anadir grupos de comida 
 # descritos en la Clase 'CreateFoodGroupRequest'
-@app.post("/group/food/nutriologist ", status_code=status.HTTP_201_CREATED)
+@app.post("/group/food/nutriologist", status_code=status.HTTP_201_CREATED)
 async def post_a_food_group(new_food_group:CreateFoodGroupRequest, user:user_dependency):
+    print("Food group ingresado: ", new_food_group)
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
     
