@@ -30,12 +30,8 @@ def add_user(create_user_model: CreateUserRequest):
 def authenticate_user(mail: str, password: str):
     with DBManager() as db:
         user = db.query(Users).filter(Users.mail == mail).first()
-        print('Query: ', user)
         if not user: 
             return False
-        print('Still')
-        print('Pass: ', password)
-        print('Saved pass: ', user.hashed_password)
         # Verifies that the password matches the stored hashed password
         if not verify_password(user.hashed_password,password):
             return False

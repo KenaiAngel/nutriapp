@@ -11,8 +11,8 @@ def get_all_food_by_id_nutriologist(nutriologist_id: int, patient_id: int):
     
 def get_patients(nutriologist_id: int):
     with DBManager() as db:
-        foods = db.query(Users).filter(Users.nutriologist_id == nutriologist_id).all()
-        return foods
+        patients = db.query(Users).filter(Users.nutriologist_id == nutriologist_id).all()
+        return patients
     
 def add_patient(patient_id: int, nutri_id: int):
     with DBManager() as db:
@@ -59,5 +59,5 @@ def add_food_group(current_food_group:CreateFoodGroupRequest):
 
 def get_all_food_groups_associate_food(food_id: int):
     with DBManager() as db:
-        foods = db.query(Food_Groups).filter(Food_Groups.food_id == food_id).all()
-        return foods
+        food_group = db.query(Food_Groups).filter(Food_Groups.food_id == food_id).all()
+        return food_group
