@@ -10,7 +10,7 @@ class Users(Base):
     first_name = Column(String)
     last_name = Column(String)
     mail = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String)
+    hashed_password = Column(String, nullable=False)
     role = Column(String, default="PACIENTE")
     nutriologist_id = Column(Integer, default=None)
 
@@ -66,6 +66,7 @@ class Food_Groups(Base):
     protein = Column(Float)
     carbohydrates = Column(Float)
     fats = Column(Float)
+    #amount = Column(Float)
 
     # Llave foránea hacia Foods
     food_id = Column(Integer, ForeignKey('foods.id'))

@@ -24,8 +24,10 @@ try:
     )
 
 
-    #db.add(nutri)
-    #db.add(patien)
+    db.add(nutri)
+    db.add(patien)
+    db.commit()
+    
     desayuno = Foods(
         food_name = 'Desayuno',
         description = 'Aqui desayunas',
