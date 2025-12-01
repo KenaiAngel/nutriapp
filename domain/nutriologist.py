@@ -55,7 +55,7 @@ def add_menu_part(current_menu_part:MenuPartRequest):
         print("Database food group: ",new_menu_part)
         return new_menu_part
 
-def get_all_food_groups_associate_food(food_event_id: int):
+def get_all_menu_parts_from_a_food_event(food_event_id: int):
     with DBManager() as db:
-        food_group = db.query(Food_Groups).filter(Food_Groups.food_event_id == food_event_id).all()
-        return food_group
+        menu_parts = db.query(Menu_Part).filter(Menu_Part.food_event_id == food_event_id).all()
+        return menu_parts

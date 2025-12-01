@@ -3,7 +3,7 @@ from security import auth
 from security.encrypt import user_dependency
 from security.roleCheck import role_access_check
 from pydantic import BaseModel
-from domain.nutriologist import get_all_food_by_id_nutriologist, get_patients, get_all_food_groups_associate_food, add_menu_part, add_patient
+from domain.nutriologist import get_all_food_by_id_nutriologist, get_patients, get_all_menu_parts_from_a_food_event, add_menu_part, add_patient
 from domain.patient import get_food_by_id_patient
 
 
@@ -82,7 +82,7 @@ class MenuPartRequest(BaseModel):
 
 # Endpoint que usara el NUTRIOLOGO para anadir partes que integran al menu 
 # descritos en la Clase 'MenuPartRequest'
-@app.post("/group/food/nutriologist", status_code=status.HTTP_201_CREATED)
+@app.post("/menu/food/nutriologist", status_code=status.HTTP_201_CREATED)
 async def post_a_food_group(new_menu_part:MenuPartRequest, user:user_dependency):
     print("Food group ingresado: ", new_menu_part)
     message_handler(user,'/group/food/nutriologist')
@@ -90,7 +90,7 @@ async def post_a_food_group(new_menu_part:MenuPartRequest, user:user_dependency)
 
 # Endpoint que usaran tanto PACIENTE como NUTRIOLOGO para obtener las partes que integran al menu 
 # descritos en la Clase 'MenuPartRequest'
-@app.get("/group/food", status_code=status.HTTP_200_OK)
+@app.get("/menu/food", status_code=status.HTTP_200_OK)
 async def get_all_food_groups(food_id:int, user: user_dependency):
     message_handler(user,'/group/food')
-    return {"data": get_all_food_groups_associate_food(food_id)}
+    return {"data": get_all_menu_parts_from_a_food_event(food_id)}
