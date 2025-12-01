@@ -110,12 +110,12 @@ async def get_all_parts_from_menu(food_id:int, user: user_dependency):
 
 
 @app.get("/equivalent/group", status_code= status.HTTP_200_OK)
-async def get_all_food_groups(user: user_dependency):
+async def get_all_groups(user: user_dependency):
     message_handler(user,'/equivalent/group')
     return {"data": get_all_food_groups()}
 
 
 @app.get("/equivalent/aliment", status_code= status.HTTP_200_OK)
-async def get_all_food_groups(group_id:int, user: user_dependency):
+async def get_all_aliment_from_a_group(group_id:int, user: user_dependency):
     message_handler(user,'/equivalent/aliment')
     return {"data": get_all_aliments_by_food_group_id(group_id)}

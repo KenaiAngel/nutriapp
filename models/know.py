@@ -59,5 +59,5 @@ def know_data():
         db.close()
         print("\n--- Consultas finalizadas. Conexión cerrada. ---")
 
-if __name__ == "__main__":
-    know_data()
+
+know_data()
