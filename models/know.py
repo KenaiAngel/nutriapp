@@ -48,10 +48,21 @@ def know_data():
         if rebanada_aliments:
             print(f"Se encontraron {len(rebanada_aliments)} alimentos en rebanada:")
             for aliment in rebanada_aliments:
-                print(f"  - {aliment.aliment_name} ({aliment.group.group_name}) | Eq: {aliment.amount} {aliment.unit}")
+                print(f"  - {aliment.aliment_name} ({aliment.food_group.group_name}) | Eq: {aliment.amount} {aliment.unit}")
         else:
             print("No se encontraron alimentos medidos en 'Rebanada'.")
 
+        print('\n## 5. Listado completo de Alimentos')
+        all_aliments = db.query(Aliment).order_by(Aliment.aliment_name).all()
+        
+        if all_aliments:
+            print(f"Listando los {len(all_aliments)} alimentos registrados:")
+            for aliment in all_aliments:
+                grupo = aliment.food_group.group_name if aliment.food_group else "---"
+                
+                print(f" | {aliment.aliment_name:30} | {grupo:20} | {aliment.amount} {aliment.unit}")
+        else:
+            print("La base de datos de alimentos está vacía.")
 
     except Exception as e:
         print(f"Error al intentar consultar la base de datos: {e}")
