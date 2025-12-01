@@ -1,25 +1,63 @@
 from models.database import SessionLocal
-from models.models_db import Users, Food_Groups, Foods
-#from domain.models import Foods
-#from domain.models import Food_Groups
+from models.models_db import FoodGroup, Aliment
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 
+# Inicialización de la sesión de base de datos
 db = SessionLocal()
-try:
-    query = db.query(Users).all()
-    for user in query:
-        # Replace 'username' and 'email' with the actual attribute names of your class
-        print(f"Username: {user.name}, Email: {user.mail} Role: {user.role}, id: {user.id}, id_nutri: {user.nutriologist_id}, pass: {user.hashed_password}")
 
-    query = db.query(Foods).all()
-    for food in query:
-        # Replace 'username' and 'email' with the actual attribute names of your class
-       print(f"ID: {food.id}, Name: {food.food_name} Description: {food.description}, Nuriolodoid: {food.nutriologist_id}, PatientId: {food.patient_id}")
-    query = db.query(Food_Groups).all()
-    for group in query:
-        # Replace 'username' and 'email' with the actual attribute names of your class
-       print(f"ID: {group.id}, Name: {group.group_name} Description: {group.description}, kcl: {group.kcal}, Protein: {group.protein}, Carbo: {group.carbohydrates}, fats: {group.fats}, Food_id:{group.food_id}")
+def know_data():
+    try:
+
+        print("\n## 1. Conteo General de Datos")
+        total_groups = db.query(FoodGroup).count()
+        total_aliments = db.query(Aliment).count()
+        print(f"Número total de Grupos de Alimentos insertados: {total_groups}")
+        print(f"Número total de Alimentos insertados: {total_aliments}")
 
 
 
-finally:
-    db.close()
+        print("\n## 2. Grupos y su Contenido")
+        group_counts = (
+            db.query(FoodGroup.group_name, func.count(Aliment.id).label('num_aliments'))
+            .outerjoin(Aliment)
+            .group_by(FoodGroup.group_name)
+            .order_by(FoodGroup.group_name)
+            .all()
+        )
+        for group_name, count in group_counts:
+            print(f"- {group_name}: {count} alimentos")
+            
+
+
+        print("\n## 3. Consultar un Grupo Específico (Frutas)")
+        frutas_group = db.query(FoodGroup).filter(FoodGroup.group_name == "Frutas").options(joinedload(FoodGroup.aliments)).first()
+        
+        if frutas_group:
+            print(f"Se encontraron {len(frutas_group.aliments)} alimentos en el grupo '{frutas_group.group_name}':")
+            for aliment in frutas_group.aliments[:5]: # Mostrar solo los primeros 5
+                print(f"  - {aliment.aliment_name} | Cantidad: {aliment.amount} {aliment.unit}")
+        else:
+            print("El grupo 'Frutas' no fue encontrado.")
+
+
+
+        print('\n## 4. Alimentos medidos en "Rebanada"')
+        rebanada_aliments = db.query(Aliment).filter(Aliment.unit == "Rebanada").all()
+        
+        if rebanada_aliments:
+            print(f"Se encontraron {len(rebanada_aliments)} alimentos en rebanada:")
+            for aliment in rebanada_aliments:
+                print(f"  - {aliment.aliment_name} ({aliment.group.group_name}) | Eq: {aliment.amount} {aliment.unit}")
+        else:
+            print("No se encontraron alimentos medidos en 'Rebanada'.")
+
+
+    except Exception as e:
+        print(f"Error al intentar consultar la base de datos: {e}")
+    finally:
+        db.close()
+        print("\n--- Consultas finalizadas. Conexión cerrada. ---")
+
+if __name__ == "__main__":
+    know_data()
