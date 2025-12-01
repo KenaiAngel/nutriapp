@@ -1,23 +1,23 @@
 from models.connection import DBManager
-from models.models_db import Users, Foods, Food_Groups
+from models.models_db import User, FoodEvent, MenuPart
 from pydantic import BaseModel
 
 def get_all_food_by_id_nutriologist(nutriologist_id: int, patient_id: int):
     with DBManager() as db:
-        food_event = db.query(Food_Event).filter(
-            (Food_Event.nutriologist_id == nutriologist_id) & (Food_Event.patient_id == patient_id)
+        food_event = db.query(FoodEvent).filter(
+            (FoodEvent.nutriologist_id == nutriologist_id) & (FoodEvent.patient_id == patient_id)
         ).all()
         return food_event
     
 def get_patients(nutriologist_id: int):
     with DBManager() as db:
-        patients = db.query(Users).filter(Users.nutriologist_id == nutriologist_id).all()
+        patients = db.query(User).filter(User.nutriologist_id == nutriologist_id).all()
         return patients
     
 def add_patient(patient_id: int, nutri_id: int):
     with DBManager() as db:
         # Buscar al paciente por su ID
-        patient = db.query(Users).filter(Users.id == patient_id).first()
+        patient = db.query(User).filter(User.id == patient_id).first()
 
         if not patient:
             raise ValueError("Paciente no encontrado")
@@ -30,6 +30,7 @@ def add_patient(patient_id: int, nutri_id: int):
         db.refresh(patient)
 
         return patient
+    
 
 class MenuPartRequest(BaseModel):
     food_event_id:int
@@ -42,7 +43,7 @@ class MenuPartRequest(BaseModel):
 # Antes add_food_group
 def add_menu_part(current_menu_part:MenuPartRequest):
     with DBManager() as db:
-        new_menu_part = Menu_Part(
+        new_menu_part = MenuPart(
             food_event_id = current_menu_part.food_event_id,
             group_name = current_menu_part.group_name,
             description = current_menu_part.description,
@@ -57,5 +58,22 @@ def add_menu_part(current_menu_part:MenuPartRequest):
 
 def get_all_menu_parts_from_a_food_event(food_event_id: int):
     with DBManager() as db:
-        menu_parts = db.query(Menu_Part).filter(Menu_Part.food_event_id == food_event_id).all()
+        menu_parts = db.query(MenuPart).filter(MenuPart.food_event_id == food_event_id).all()
         return menu_parts
+
+class FoodEventRequest(BaseModel):
+    food_name: str
+    description:str | None
+    patient_id: int
+
+def add_food_event (current_food_event:FoodEventRequest, nutriologist_id:int):
+    with DBManager() as db:
+        new_food_event = FoodEvent(
+            food_name = current_food_event.food_name,
+            description = current_food_event.description,
+            nutriologist_id = nutriologist_id,
+            patient_id = current_food_event.patient_id
+        )
+        db.add(new_food_event)
+        db.commit()
+        return new_food_event

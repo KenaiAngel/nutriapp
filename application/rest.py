@@ -3,8 +3,9 @@ from security import auth
 from security.encrypt import user_dependency
 from security.roleCheck import role_access_check
 from pydantic import BaseModel
-from domain.nutriologist import get_all_food_by_id_nutriologist, get_patients, get_all_menu_parts_from_a_food_event, add_menu_part, add_patient
+from domain.nutriologist import get_all_food_by_id_nutriologist, get_patients, get_all_menu_parts_from_a_food_event, add_menu_part, add_patient, add_food_event
 from domain.patient import get_food_by_id_patient
+from domain.equivalent import get_all_food_groups,get_all_aliments_by_food_group_id
 
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -51,6 +52,18 @@ async def get_food_patient(user: user_dependency):
     message_handler(user,"/food/patient")
     return {"data": get_food_by_id_patient(user["id"])}
 
+
+class FoodEventRequest(BaseModel):
+    food_name: str
+    description:str | None
+    patient_id: int
+
+@app.post("/food/nutriologist",status_code=status.HTTP_201_CREATED)
+async def post_food_to_patient (new_food_event:FoodEventRequest,user: user_dependency):
+    message_handler(user,'/food/nutriologist')           
+    return {"data": add_food_event(new_food_event, user["id"])}
+
+
 # Endpoint que usara el NUTRIOLOGO para obtener a las comidas (Desayuno, Merienda, Cena, Colacion, etc) 
 # segun el id propio (nutriologo) y el id del paciente
 @app.get("/food/nutriologist/{patient_id}",status_code=status.HTTP_200_OK)
@@ -82,15 +95,27 @@ class MenuPartRequest(BaseModel):
 
 # Endpoint que usara el NUTRIOLOGO para anadir partes que integran al menu 
 # descritos en la Clase 'MenuPartRequest'
-@app.post("/menu/food/nutriologist", status_code=status.HTTP_201_CREATED)
-async def post_a_food_group(new_menu_part:MenuPartRequest, user:user_dependency):
+@app.post("/food/menu/nutriologist", status_code=status.HTTP_201_CREATED)
+async def post_a_menu_part(new_menu_part:MenuPartRequest, user:user_dependency):
     print("Food group ingresado: ", new_menu_part)
-    message_handler(user,'/group/food/nutriologist')
+    message_handler(user,"/food/menu/nutriologist")
     return {"data": add_menu_part(new_menu_part)}
 
 # Endpoint que usaran tanto PACIENTE como NUTRIOLOGO para obtener las partes que integran al menu 
 # descritos en la Clase 'MenuPartRequest'
-@app.get("/menu/food", status_code=status.HTTP_200_OK)
-async def get_all_food_groups(food_id:int, user: user_dependency):
-    message_handler(user,'/group/food')
+@app.get("/food/menu", status_code=status.HTTP_200_OK)
+async def get_all_parts_from_menu(food_id:int, user: user_dependency):
+    message_handler(user,'/food/menu')
     return {"data": get_all_menu_parts_from_a_food_event(food_id)}
+
+
+@app.get("/equivalent/group", status_code= status.HTTP_200_OK)
+async def get_all_food_groups(user: user_dependency):
+    message_handler(user,'/equivalent/group')
+    return {"data": get_all_food_groups()}
+
+
+@app.get("/equivalent/aliment", status_code= status.HTTP_200_OK)
+async def get_all_food_groups(group_id:int, user: user_dependency):
+    message_handler(user,'/equivalent/aliment')
+    return {"data": get_all_aliments_by_food_group_id(group_id)}

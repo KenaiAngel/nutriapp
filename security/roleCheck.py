@@ -3,13 +3,18 @@ from pydantic import BaseModel
 nutriologist_routes = [
     '/patients/nutriologist',
     '/food/nutriologist/{patient_id}',
-    '/group/food/nutriologist',
-    '/group/food'
+    '/food/nutriologist',
+    '/food/menu/nutriologist',
+    '/food/menu',
+    '/equivalent/group',
+    '/equivalent/aliment'
 ]
 
 patient_routes = [
     '/food/patient',
-    '/group/food'
+    '/food/menu',
+    '/equivalent/group',
+    '/equivalent/aliment'
 ]
 
 valid_roles = [

@@ -1,5 +1,5 @@
 from models.connection import DBManager
-from models.models_db import Users
+from models.models_db import User
 from pydantic import BaseModel
 from security.encrypt import hash_password, verify_password
 
@@ -16,7 +16,7 @@ def add_user(create_user_model: CreateUserRequest):
         hash = hash_password(create_user_model.password) 
         print("Contrasena a guardar: ", hash)
         # Create a new user model instance with a hashed password
-        create_user = Users(
+        create_user = User(
             name=create_user_model.name,
             first_name= create_user_model.first_name,
             last_name= create_user_model.last_name,
@@ -29,7 +29,7 @@ def add_user(create_user_model: CreateUserRequest):
 
 def authenticate_user(mail: str, password: str):
     with DBManager() as db:
-        user = db.query(Users).filter(Users.mail == mail).first()
+        user = db.query(User).filter(User.mail == mail).first()
         if not user: 
             return False
         # Verifies that the password matches the stored hashed password
