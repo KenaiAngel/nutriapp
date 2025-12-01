@@ -14,6 +14,19 @@ app = FastAPI()
 app.include_router(auth.router)
 #app.include_router(common.router)
 
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 not_found_exception = HTTPException(status_code=401, detail="Authentication Failed")
 forbidden_access = HTTPException(status_code=403, detail="Forbidden")
 
