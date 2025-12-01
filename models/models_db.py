@@ -36,7 +36,6 @@ class User(Base):
         foreign_keys="FoodEvent.patient_id",
         back_populates="patient"
     )
-
 class FoodEvent(Base):
     __tablename__ = 'food_event'
 
@@ -59,8 +58,20 @@ class FoodEvent(Base):
         back_populates="foods_as_patient"
     )
 
-    groups = relationship(
-        "MenuPart",
+    # Relación: un FoodEvent tiene muchos MenuRegister base
+    menu_items = relationship(
+        "MenuRegister",
+        back_populates="food_event"
+    )
+
+    menu_parts = relationship(
+        "MenuPart", 
+        back_populates="food_event"
+    )
+
+    # Relación: registros por fecha
+    daily_logs = relationship(
+        "FoodEventRegister",
         back_populates="food_event"
     )
 
@@ -70,7 +81,6 @@ class MenuPart(Base):
     id = Column(Integer, primary_key=True, index=True)
     group_name = Column(String)
     description = Column(String)
-    equivalent = Column(Float)
     aliment = Column(String)
     amount = Column(Float)
     unit = Column(String)
@@ -78,21 +88,32 @@ class MenuPart(Base):
     food_event_id = Column(Integer, ForeignKey('food_event.id'))
 
     food_event = relationship(
-        "FoodEvent",
-        back_populates="groups"
+        "FoodEvent", 
+        back_populates="menu_parts"
     )
 
-class PartRegister(Base):
-    __tablename__ = 'part_register'
+
+class FoodEventRegister(Base):
+    __tablename__ = 'food_event_register'
 
     id = Column(Integer, primary_key=True)
-    date = Column(Date)
+    date = Column(Date, nullable=False)
 
-    part_id = Column(Integer, ForeignKey('menu_part.id'))
-    register_id = Column(Integer, ForeignKey('menu_register.id'))
+    food_event_id = Column(Integer, ForeignKey('food_event.id'), nullable=False)
+    menu_register_id = Column(Integer, ForeignKey('menu_register.id'), nullable=False)
 
-    part = relationship("MenuPart", backref="part_registers")
-    menu_register = relationship("MenuRegister", backref="part_registers")
+    # Relación hacia el evento principal
+    food_event = relationship(
+        "FoodEvent",
+        back_populates="daily_logs"
+    )
+
+    # Relación hacia un alimento del menú base
+    menu_register = relationship(
+        "MenuRegister",
+        back_populates="daily_usages"
+    )
+
 
 class MenuRegister(Base):
     __tablename__ = 'menu_register'
@@ -100,10 +121,20 @@ class MenuRegister(Base):
     id = Column(Integer, primary_key=True, index=True)
     group_name = Column(String)
     description = Column(String)
-    equivalent = Column(Float)
     aliment = Column(String)
     amount = Column(Float)
     unit = Column(String)
+
+    # Relación hacia FoodEvent (menú base)
+    food_event_id = Column(Integer, ForeignKey("food_event.id"))
+    food_event = relationship("FoodEvent", back_populates="menu_items")
+
+    # Relación hacia fechas donde este alimento fue usado
+    daily_usages = relationship(
+        "FoodEventRegister",
+        back_populates="menu_register"
+    )
+
 
 class Aliment(Base):
     __tablename__ = 'aliment'

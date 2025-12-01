@@ -7,14 +7,16 @@ nutriologist_routes = [
     '/food/menu/nutriologist',
     '/food/menu',
     '/equivalent/group',
-    '/equivalent/aliment'
+    '/equivalent/aliment',
+    '/food/menu/register'
 ]
 
 patient_routes = [
     '/food/patient',
     '/food/menu',
     '/equivalent/group',
-    '/equivalent/aliment'
+    '/equivalent/aliment',
+    '/food/menu/register',
 ]
 
 valid_roles = [

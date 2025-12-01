@@ -13,7 +13,8 @@ def get_patients(nutriologist_id: int):
     with DBManager() as db:
         patients = db.query(User).filter(User.nutriologist_id == nutriologist_id).all()
         return patients
-    
+
+
 def add_patient(patient_id: int, nutri_id: int):
     with DBManager() as db:
         # Buscar al paciente por su ID

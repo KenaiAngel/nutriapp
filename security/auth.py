@@ -33,13 +33,14 @@ router = APIRouter(
     prefix='/auth',       # Every route here will start with /auth
     tags=['auth']         
 )
-class CreateUserRequest(BaseModel):
+class CreatenNutriRequest(BaseModel):
     name: str
     first_name: str
     last_name: str
     mail: str
     password: str
-    role: str
+    license: int
+
 
 class Token(BaseModel):
     access_token: str
@@ -47,8 +48,15 @@ class Token(BaseModel):
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_user(create_user_request:CreateUserRequest):
-    add_user(create_user_request)
+async def create_user(create_user_request:CreatenNutriRequest):
+    response= add_user(create_user_request)
+    if not response['valid']:
+        raise HTTPException(
+            status_code= status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate user"
+        )
+    
+    return response
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
