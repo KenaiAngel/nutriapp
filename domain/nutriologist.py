@@ -4,10 +4,10 @@ from pydantic import BaseModel
 
 def get_all_food_by_id_nutriologist(nutriologist_id: int, patient_id: int):
     with DBManager() as db:
-        foods = db.query(Foods).filter(
-            (Foods.nutriologist_id == nutriologist_id) & (Foods.patient_id == patient_id)
+        food_event = db.query(Food_Event).filter(
+            (Food_Event.nutriologist_id == nutriologist_id) & (Food_Event.patient_id == patient_id)
         ).all()
-        return foods
+        return food_event
     
 def get_patients(nutriologist_id: int):
     with DBManager() as db:
@@ -31,33 +31,31 @@ def add_patient(patient_id: int, nutri_id: int):
 
         return patient
 
-class CreateFoodGroupRequest(BaseModel):
-    food_id:int
+class MenuPartRequest(BaseModel):
+    food_event_id:int
     group_name: str
     description: str
-    kcal: float
-    protein: float
-    carbohydrates: float
-    fats: float
+    aliment: float
+    amount: float
+    unit: str
 
-
-def add_food_group(current_food_group:CreateFoodGroupRequest):
+# Antes add_food_group
+def add_menu_part(current_menu_part:MenuPartRequest):
     with DBManager() as db:
-        new_food_group = Food_Groups(
-            group_name = current_food_group.group_name,
-            description = current_food_group.description,
-            kcal = current_food_group.kcal,
-            protein = current_food_group.protein,
-            carbohydrates= current_food_group.carbohydrates,
-            fats= current_food_group.fats,
-            food_id= current_food_group.food_id
+        new_menu_part = Menu_Part(
+            food_event_id = current_menu_part.food_event_id,
+            group_name = current_menu_part.group_name,
+            description = current_menu_part.description,
+            aliment = current_menu_part.aliment,
+            amount = current_menu_part.amount,
+            unit= current_menu_part.unit
         )
-        db.add(new_food_group)
+        db.add(new_menu_part)
         db.commit()
-        print("Database food group: ",new_food_group)
-        return new_food_group
+        print("Database food group: ",new_menu_part)
+        return new_menu_part
 
-def get_all_food_groups_associate_food(food_id: int):
+def get_all_food_groups_associate_food(food_event_id: int):
     with DBManager() as db:
-        food_group = db.query(Food_Groups).filter(Food_Groups.food_id == food_id).all()
+        food_group = db.query(Food_Groups).filter(Food_Groups.food_event_id == food_event_id).all()
         return food_group
