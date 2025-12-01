@@ -88,8 +88,8 @@ async def post_a_food_group(new_menu_part:MenuPartRequest, user:user_dependency)
     message_handler(user,'/group/food/nutriologist')
     return {"data": add_menu_part(new_menu_part)}
 
-# Endpoint que usaran tanto PACIENTE como NUTRIOLOGO para obtener los grupos de comida 
-# descritos en la Clase 'CreateFoodGroupRequest'
+# Endpoint que usaran tanto PACIENTE como NUTRIOLOGO para obtener las partes que integran al menu 
+# descritos en la Clase 'MenuPartRequest'
 @app.get("/group/food", status_code=status.HTTP_200_OK)
 async def get_all_food_groups(food_id:int, user: user_dependency):
     message_handler(user,'/group/food')
