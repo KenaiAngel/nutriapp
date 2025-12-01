@@ -1,25 +1,30 @@
 from models.database import SessionLocal
-from models.models_db import Users, Food_Groups, Foods
-#from domain.models import Foods
-#from domain.models import Food_Groups
+from models.models_db import Food_group, Aliment
 
 db = SessionLocal()
+
 try:
-    query = db.query(Users).all()
-    for user in query:
-        # Replace 'username' and 'email' with the actual attribute names of your class
-        print(f"Username: {user.name}, Email: {user.mail} Role: {user.role}, id: {user.id}, id_nutri: {user.nutriologist_id}, pass: {user.hashed_password}")
 
-    query = db.query(Foods).all()
-    for food in query:
-        # Replace 'username' and 'email' with the actual attribute names of your class
-       print(f"ID: {food.id}, Name: {food.food_name} Description: {food.description}, Nuriolodoid: {food.nutriologist_id}, PatientId: {food.patient_id}")
-    query = db.query(Food_Groups).all()
-    for group in query:
-        # Replace 'username' and 'email' with the actual attribute names of your class
-       print(f"ID: {group.id}, Name: {group.group_name} Description: {group.description}, kcl: {group.kcal}, Protein: {group.protein}, Carbo: {group.carbohydrates}, fats: {group.fats}, Food_id:{group.food_id}")
+    print("\n--- LISTA DE ALIMENTOS ---")
+    query_alimentos = db.query(Aliment).all()
+    
+    for food in query_alimentos:
+        nombre_grupo = food.food_group.group_name if food.food_group else "Sin Grupo"
+        
+        print(f"ID: {food.id}, Alimento: {food.aliment_name}, "
+              f"Cantidad: {food.amount} {food.unit}, "
+              f"Grupo: {nombre_grupo}")
 
-
+    print("\n" + "="*40 + "\n")
+    print("--- GRUPOS DE ALIMENTOS ---")
+    
+    query_groups = db.query(Food_group).all()
+    
+    for group in query_groups:
+        cantidad_alimentos = len(group.aliments)
+        
+        print(f"ID: {group.id}, Grupo: {group.group_name}, "
+              f"Contiene: {cantidad_alimentos} alimentos")
 
 finally:
     db.close()
