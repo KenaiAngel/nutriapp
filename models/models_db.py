@@ -1,75 +1,71 @@
-from sqlite3 import Date
-from models.database import Base
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from sqlalchemy.orm import relationship
 from datetime import date
+from models.database import Base
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date
+from sqlalchemy.orm import relationship
 
-
-class Users(Base):
+class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
 
-    age = Column(int)                       
-    height = Column(float)                  
-    goal_weight = Column(float)             
-    actual_weight = Column(float)           
-    gender = Column(String)                 
-    cellphone = Column(String)              
-    first_name = Column(String)             
-    last_name = Column(String)              
-    last_visit = Column(Date)           
-    
+    age = Column(Integer)
+    height = Column(Float)
+    goal_weight = Column(Float)
+    actual_weight = Column(Float)
+    gender = Column(String)
+    cellphone = Column(String)
+    first_name = Column(String)
+    last_name = Column(String)
+    last_visit = Column(Date)
+
     mail = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     role = Column(String, default="PACIENTE")
     nutriologist_id = Column(Integer, default=None)
 
-    # 🔹 Relaciones bidireccionales
+    # Relaciones
     foods_as_nutriologist = relationship(
-        "Foods",
-        foreign_keys="Foods.nutriologist_id",
+        "FoodEvent",
+        foreign_keys="FoodEvent.nutriologist_id",
         back_populates="nutriologist"
     )
+
     foods_as_patient = relationship(
-        "Foods",
-        foreign_keys="Foods.patient_id",
+        "FoodEvent",
+        foreign_keys="FoodEvent.patient_id",
         back_populates="patient"
     )
 
-class Food_Event(Base):
-    __tablename__ = 'Food_Event'
+class FoodEvent(Base):
+    __tablename__ = 'food_event'
 
     id = Column(Integer, primary_key=True, index=True)
     food_name = Column(String)
     description = Column(String)
 
-    # 🔹 Llaves foráneas
     nutriologist_id = Column(Integer, ForeignKey('users.id'))
     patient_id = Column(Integer, ForeignKey('users.id'))
 
-    # 🔹 Relaciones con Users
     nutriologist = relationship(
-        "Users",
+        "User",
         foreign_keys=[nutriologist_id],
         back_populates="foods_as_nutriologist"
     )
+
     patient = relationship(
-        "Users",
+        "User",
         foreign_keys=[patient_id],
         back_populates="foods_as_patient"
     )
 
-    # 🔹 Relación con Food_Groups
     groups = relationship(
-        "Menu_part",
-        back_populates="food"
+        "MenuPart",
+        back_populates="food_event"
     )
 
-
-class Menu_part(Base):
-    __tablename__ = 'Menu_part'
+class MenuPart(Base):
+    __tablename__ = 'menu_part'
 
     id = Column(Integer, primary_key=True, index=True)
     group_name = Column(String)
@@ -79,37 +75,27 @@ class Menu_part(Base):
     amount = Column(Float)
     unit = Column(String)
 
-    # Llave foránea hacia Foods
-    food_event_id = Column(Integer, ForeignKey('Food_Events.id'))
+    food_event_id = Column(Integer, ForeignKey('food_event.id'))
 
-    # Relación inversa
-    food = relationship(
-        "Food_Event",
+    food_event = relationship(
+        "FoodEvent",
         back_populates="groups"
     )
 
-class Part_register(Base):
-    __tablename__ = 'Part_register'
+class PartRegister(Base):
+    __tablename__ = 'part_register'
 
+    id = Column(Integer, primary_key=True)
     date = Column(Date)
 
-    id_part = Column(Intenger, ForeignKey('Menu_part.id'))
-    id_register = Column(Intenger, ForeignKey('Menu_register.id'))
+    part_id = Column(Integer, ForeignKey('menu_part.id'))
+    register_id = Column(Integer, ForeignKey('menu_register.id'))
 
-    # Relación inversa a Menu_part
-    part = relationship(
-        "Menu_part",
-        backref="Part_register"
-    )
+    part = relationship("MenuPart", backref="part_registers")
+    menu_register = relationship("MenuRegister", backref="part_registers")
 
-    # Relación inversa a Menu_register
-    menu_register = relationship(
-        "Menu_register",
-        backref="Part_register"
-    )
-
-class Menu_register(Base):
-    __tablename__ = 'Menu_register'
+class MenuRegister(Base):
+    __tablename__ = 'menu_register'
 
     id = Column(Integer, primary_key=True, index=True)
     group_name = Column(String)
@@ -119,35 +105,22 @@ class Menu_register(Base):
     amount = Column(Float)
     unit = Column(String)
 
-    parts = relationship(
-        "Part_register",
-        backref="Menu_register"
-    )
-
 class Aliment(Base):
-    __tablename__ = 'Aliment'
+    __tablename__ = 'aliment'
 
     id = Column(Integer, primary_key=True, index=True)
     aliment_name = Column(String)
     amount = Column(Float)
     unit = Column(String)
 
-    # Llave foránea hacia Food_group
-    group_id = Column(Integer, ForeignKey('Food_group.id'))
+    group_id = Column(Integer, ForeignKey('food_group.id'))
 
-    # Relación inversa a Food_group
-    food_group = relationship(
-        "Food_group",
-        backref="Aliment"
-    )
+    food_group = relationship("FoodGroup", back_populates="aliments")
 
-class Food_group(Base):
-    __tablename__ = 'Food_group'
+class FoodGroup(Base):
+    __tablename__ = 'food_group'
 
     id = Column(Integer, primary_key=True, index=True)
     group_name = Column(String)
-    # Relación inversa a Aliments
-    aliments = relationship(
-        "Aliment",
-        backref="Food_group"
-    )
+
+    aliments = relationship("Aliment", back_populates="food_group")
