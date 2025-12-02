@@ -45,6 +45,7 @@ class CreatenNutriRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    role: str
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
@@ -70,5 +71,5 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
         )
     
     token = create_access_token(user.mail, user.id, user.role,timedelta(minutes=20))
-    return {'access_token': token, 'token_type': 'bearer'}
+    return {'access_token': token, 'token_type': 'bearer', 'role':user.role}
 
