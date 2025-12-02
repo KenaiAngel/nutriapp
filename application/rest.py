@@ -18,7 +18,8 @@ app.include_router(auth.router)
 
 origins = [
     "http://localhost:5173",
-    "http://127.0.0.1:5173"
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5500"
 ]
 
 app.add_middleware(
@@ -61,8 +62,9 @@ class FoodEventRequest(BaseModel):
 
 @app.post("/food/nutriologist",status_code=status.HTTP_201_CREATED)
 async def post_food_to_patient (new_food_event:FoodEventRequest,user: user_dependency):
-    message_handler(user,'/food/nutriologist')           
-    return {"data": add_food_event(new_food_event, user["id"])}
+    message_handler(user,'/food/nutriologist')       
+    response = add_food_event(new_food_event, user["id"])
+    return response
 
 
 # Endpoint que usara el NUTRIOLOGO para obtener a las comidas (Desayuno, Merienda, Cena, Colacion, etc) 

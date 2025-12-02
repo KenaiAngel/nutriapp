@@ -30,6 +30,8 @@ class RoleResponse(BaseModel):
     user: dict | None
 
 def role_access_check (user:dict, route:str ):
+    print(user)
+    print(route)
     if user is  None:
         return RoleResponse (
             access= False,
