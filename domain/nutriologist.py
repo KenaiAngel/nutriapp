@@ -75,7 +75,14 @@ def add_menu_part(current_menu_part:MenuPartRequest):
         db.add(new_menu_part)
         db.commit()
         print("Database food group: ",new_menu_part)
-        return new_menu_part
+        return {
+            'food_event_id': new_menu_part.food_event_id,
+            'group_name': new_menu_part.group_name,
+            'description': new_menu_part.description,
+            'aliment': new_menu_part.aliment,
+            'amount': new_menu_part.amount,
+            'unit': new_menu_part.unit
+        }
 
 def get_all_menu_parts_from_a_food_event(food_event_id: int):
     with DBManager() as db:
