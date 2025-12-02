@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from domain.nutriologist import get_all_food_by_id_nutriologist, get_patients, get_all_menu_parts_from_a_food_event, add_menu_part, add_patient, add_food_event
 from domain.patient import get_food_by_id_patient, add_new_register, get_all_registers_date_food_id
 from domain.equivalent import get_all_food_groups,get_all_aliments_by_food_group_id
-from domain.users import add_user
+from domain.users import add_user, get_general_user_info
 from datetime import date
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -158,3 +158,8 @@ async def post_new_resgister_patient(new_menu_register:MenuRegisterRequest, user
 async def get_all_resgisters_with_date_event_id(date:date, food_event_id:int,user: user_dependency):
     message_handler(user,'/food/menu/register')
     return {"data": get_all_registers_date_food_id(date, food_event_id)}
+
+@app.get('/me')
+async def get_current_user_info(user: user_dependency):
+    message_handler(user,'/me')
+    return{'data':get_general_user_info( user['id'])}

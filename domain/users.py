@@ -64,3 +64,15 @@ def authenticate_user(mail: str, password: str):
         if not verify_password(user.hashed_password,password):
             return False
         return user
+
+def get_general_user_info(user_id:int):
+    with DBManager() as db:
+        u = db.query(User).filter(User.id == user_id).first()
+
+        return {
+            'mail': u.mail,
+            'name': u.name,
+            'first_name': u.first_name,
+            'last_name': u.last_name,
+            'role': u.role
+        }
