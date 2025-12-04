@@ -69,14 +69,11 @@ def add_new_register(current_register: MenuRegisterRequest):
 
 
 
-def get_all_registers_date_food_id(date:date, food_event_id:int):
+def get_all_registers_date_food_id(food_event_id:int):
     with DBManager() as db:
         # Obtener todos los registros del evento y fecha indicados
         event_registers = db.query(FoodEventRegister).filter(
-            and_(
-                FoodEventRegister.date == date,
-                FoodEventRegister.food_event_id == food_event_id
-            )
+            FoodEventRegister.food_event_id == food_event_id
         ).all()
 
         if not event_registers:
@@ -95,6 +92,7 @@ def get_all_registers_date_food_id(date:date, food_event_id:int):
 
                 menu_registers_list.append({
                     "id": menu_register.id,
+                    "date": register.date, 
                     "group_name": menu_register.group_name,
                     "description": menu_register.description,
                     "aliment": menu_register.aliment,

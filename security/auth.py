@@ -23,7 +23,7 @@ from jose import jwt, JWTError
 import os
 from dotenv import load_dotenv
 
-from domain.users import add_user, authenticate_user
+from domain.users import add_nutri, authenticate_user
 from security.encrypt import create_access_token
 
 load_dotenv()
@@ -50,7 +50,7 @@ class Token(BaseModel):
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(create_user_request:CreatenNutriRequest):
-    response= add_user(create_user_request)
+    response= add_nutri(create_user_request)
     if not response['valid']:
         raise HTTPException(
             status_code= status.HTTP_401_UNAUTHORIZED,
@@ -70,6 +70,6 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
             detail="Could not validate user"
         )
     
-    token = create_access_token(user.mail, user.id, user.role,timedelta(minutes=20))
+    token = create_access_token(user.mail, user.id, user.role,timedelta(minutes=60))
     return {'access_token': token, 'token_type': 'bearer', 'role':user.role}
 

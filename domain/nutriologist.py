@@ -32,8 +32,28 @@ def get_patients(nutriologist_id: int):
             result.append(patient_dict)
 
         return result
-
-
+    
+def get_patient(patient_id:int,nutri_id:int):
+    with DBManager() as db:
+        p = db.query(User).filter(
+            (User.nutriologist_id == nutri_id)
+            &
+            (User.id == patient_id)
+        ).first()
+        return  {
+            "id": p.id,
+            "name": p.name,
+            "first_name": p.first_name,
+            "last_name": p.last_name,
+            "mail": p.mail,
+            "age": p.age,
+            "height": p.height,
+            "goal_weight": p.goal_weight,
+            "actual_weight": p.actual_weight,
+            "gender": p.gender,
+            "cellphone": p.cellphone,
+            "last_visit": p.last_visit
+        }
 
 def add_patient(patient_id: int, nutri_id: int):
     with DBManager() as db:
@@ -104,7 +124,9 @@ def add_food_event (current_food_event:FoodEventRequest, nutriologist_id:int):
         )
         db.add(new_food_event)
         db.commit()
+        db.refresh(new_food_event)
         return {
+            'id': new_food_event.id,
             'food_name':new_food_event.food_name, 
             'description':new_food_event.description,
             'patient_id':new_food_event.patient_id,

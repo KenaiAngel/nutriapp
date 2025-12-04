@@ -9,6 +9,7 @@ nutriologist_routes = [
     '/equivalent/group',
     '/equivalent/aliment',
     '/food/menu/register',
+    '/patient/nutriologist',
     '/me'
 ]
 
